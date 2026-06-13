@@ -1,0 +1,33 @@
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page(~{::title}, ~{::content})}">
+<title>Nouvelle réclamation</title>
+
+<th:block th:fragment="content">
+
+    <h2 class="mb-3">Nouvelle réclamation</h2>
+
+    <form th:action="@{/reclamations}" th:object="${reclamation}" method="post" style="max-width: 600px;">
+
+        <div class="mb-3">
+            <label class="form-label">Titre</label>
+            <input type="text" th:field="*{titre}" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea th:field="*{description}" class="form-control" rows="4" required></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Catégorie</label>
+            <select th:field="*{categorie}" class="form-select">
+                <option value="">-- Aucune --</option>
+                <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.nom}"></option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Soumettre</button>
+        <a th:href="@{/reclamations}" class="btn btn-secondary">Annuler</a>
+    </form>
+
+</th:block>
+</html>

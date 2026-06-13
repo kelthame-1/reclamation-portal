@@ -1,0 +1,99 @@
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page(~{::title}, ~{::content})}">
+<title>Détails Réclamation</title>
+
+<th:block th:fragment="content">
+
+    <a th:href="@{/reclamations}" class="btn btn-outline-secondary mb-3">&larr; Retour</a>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <h3 th:text="${reclamation.titre}"></h3>
+            <p th:text="${reclamation.description}"></p>
+
+            <table class="table table-sm">
+                <tr>
+                    <th>Statut</th>
+                    <td>
+                        <span th:switch="${reclamation.statut.name()}">
+                            <span th:case="'OUVERTE'" class="badge rounded-pill bg-primary">Ouverte</span>
+                            <span th:case="'EN_TRAITEMENT'" class="badge rounded-pill bg-warning text-dark">En traitement</span>
+                            <span th:case="'RESOLUE'" class="badge rounded-pill bg-success">Résolue</span>
+                            <span th:case="'FERMEE'" class="badge rounded-pill bg-secondary">Fermée</span>
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Catégorie</th>
+                    <td th:text="${reclamation.categorie != null ? reclamation.categorie.nom : '-'}"></td>
+                </tr>
+                <tr>
+                    <th>Client</th>
+                    <td th:text="${reclamation.client != null ? reclamation.client.nom : '-'}"></td>
+                </tr>
+                <tr>
+                    <th>Agent</th>
+                    <td th:text="${reclamation.agent != null ? reclamation.agent.nom : '-'}"></td>
+                </tr>
+                <tr>
+                    <th>Date création</th>
+                    <td th:text="${#temporals.format(reclamation.dateCreation, 'dd/MM/yyyy HH:mm')}"></td>
+                </tr>
+                <tr>
+                    <th>Date résolution</th>
+                    <td th:text="${reclamation.dateResolution != null ? #temporals.format(reclamation.dateResolution, 'dd/MM/yyyy HH:mm') : '-'}"></td>
+                </tr>
+            </table>
+
+            <div th:if="${currentUser != null and currentUser.role.name() == 'SUPERVISEUR'}" class="mt-3">
+                <h6>Assigner un agent</h6>
+                <form th:action="@{/reclamations/{id}/assigner(id=${reclamation.id})}" method="post" class="d-flex gap-2">
+                    <select name="agentId" class="form-select" style="max-width: 300px;" required>
+                        <option value="">-- Sélectionner un agent --</option>
+                        <option th:each="agent : ${agents}" th:value="${agent.id}" th:text="${agent.nom}"
+                                th:selected="${reclamation.agent != null and reclamation.agent.id == agent.id}"></option>
+                    </select>
+                    <button type="submit" class="btn btn-sm btn-primary">Assigner</button>
+                </form>
+            </div>
+            <div th:if="${currentUser != null and (currentUser.role.name() == 'AGENT' or currentUser.role.name() == 'SUPERVISEUR')}" class="mt-3">
+                <h6>Changer le statut</h6>
+                <form th:action="@{/reclamations/{id}/statut(id=${reclamation.id})}" method="post" class="d-flex gap-2">
+                    <select name="statut" class="form-select" style="max-width: 300px;" required>
+                        <option th:each="s : ${statuts}" th:value="${s}" th:text="${s}"
+                                th:selected="${s == reclamation.statut}"></option>
+                    </select>
+                    <button type="submit" class="btn btn-sm btn-warning">Mettre à jour</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <h4>Réponses</h4>
+    <div th:if="${#lists.isEmpty(reponses)}" class="text-muted">Aucune réponse pour le moment.</div>
+
+    <div class="card mb-2" th:each="rep : ${reponses}">
+        <div class="card-body">
+            <p th:text="${rep.contenu}"></p>
+            <small class="text-muted">
+                <span th:text="${rep.auteur != null ? rep.auteur.nom : '-'}"></span> —
+                <span th:text="${#temporals.format(rep.dateReponse, 'dd/MM/yyyy HH:mm')}"></span>
+            </small>
+        </div>
+    </div>
+
+    <div class="card mt-3">
+        <div class="card-body">
+            <h5>Ajouter une réponse</h5>
+            <form th:action="@{/reponses}" method="post">
+                <input type="hidden" name="reclamationId" th:value="${reclamation.id}">
+                <div class="mb-3">
+                    <textarea name="contenu" class="form-control" rows="3" required placeholder="Votre réponse..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Envoyer</button>
+            </form>
+        </div>
+    </div>
+
+</th:block>
+
+</html>

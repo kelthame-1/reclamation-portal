@@ -1,0 +1,116 @@
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page(~{::title}, ~{::content})}">
+<title>Réclamations</title>
+
+<th:block th:fragment="content">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold mb-0">Réclamations</h2>
+        <a th:if="${currentUser.role.name() == 'CLIENT'}" th:href="@{/reclamations/nouvelle}" class="btn btn-primary">
+            <i class="bi bi-plus-lg"></i> Nouvelle réclamation
+        </a>
+    </div>
+
+    <div class="card border-0 shadow-sm mb-3">
+        <div class="card-body">
+            <form th:action="@{/reclamations}" method="get">
+                <div class="row g-2 align-items-center">
+
+                    <div class="col-md-3">
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text bg-white border-end-0">
+                                <i class="bi bi-search text-muted"></i>
+                            </span>
+                            <input type="text" name="search" class="form-control border-start-0"
+                                   placeholder="Rechercher par titre..."
+                                   th:value="${searchFiltre}">
+                        </div>
+                    </div>
+
+                    <div class="col-md-2">
+                        <select name="statut" class="form-select form-select-sm">
+                            <option value="">Tous les statuts</option>
+                            <option th:each="s : ${statuts}" th:value="${s}" th:text="${s}"
+                                    th:selected="${s == statutFiltre}"></option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-2">
+                        <select name="categorieId" class="form-select form-select-sm">
+                            <option value="">Toutes catégories</option>
+                            <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.nom}"
+                                    th:selected="${categorieFiltre != null and categorieFiltre == cat.id}"></option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-2" th:if="${clients != null}">
+                        <select name="clientId" class="form-select form-select-sm">
+                            <option value="">Tous les clients</option>
+                            <option th:each="c : ${clients}" th:value="${c.id}" th:text="${c.nom}"
+                                    th:selected="${clientFiltre != null and clientFiltre == c.id}"></option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-1">
+                        <input type="date" name="dateDebut" class="form-control form-control-sm"
+                               th:value="${dateDebutFiltre}">
+                    </div>
+
+                    <div class="col-md-1">
+                        <input type="date" name="dateFin" class="form-control form-control-sm"
+                               th:value="${dateFinFiltre}">
+                    </div>
+
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-sm btn-primary">
+                            <i class="bi bi-funnel"></i> Filtrer
+                        </button>
+                        <a th:href="@{/reclamations}" class="btn btn-sm btn-link text-muted">Réinitialiser</a>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                <tr class="text-muted small">
+                    <th>ID</th>
+                    <th>Titre</th>
+                    <th>Statut</th>
+                    <th>Catégorie</th>
+                    <th>Client</th>
+                    <th>Agent</th>
+                    <th>Date création</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="r : ${reclamations}">
+                    <td th:text="${r.id}"></td>
+                    <td th:text="${r.titre}"></td>
+                    <td>
+                            <span th:switch="${r.statut.name()}">
+                                <span th:case="'OUVERTE'" class="badge rounded-pill bg-primary">Ouverte</span>
+                                <span th:case="'EN_TRAITEMENT'" class="badge rounded-pill bg-warning text-dark">En traitement</span>
+                                <span th:case="'RESOLUE'" class="badge rounded-pill bg-success">Résolue</span>
+                                <span th:case="'FERMEE'" class="badge rounded-pill bg-secondary">Fermée</span>
+                            </span>
+                    </td>
+                    <td th:text="${r.categorie != null ? r.categorie.nom : '-'}"></td>
+                    <td th:text="${r.client != null ? r.client.nom : '-'}"></td>
+                    <td th:text="${r.agent != null ? r.agent.nom : '-'}"></td>
+                    <td th:text="${#temporals.format(r.dateCreation, 'dd/MM/yyyy HH:mm')}"></td>
+                    <td>
+                        <a th:href="@{/reclamations/{id}(id=${r.id})}" class="btn btn-sm btn-outline-primary">Détails</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</th:block>
+</html>

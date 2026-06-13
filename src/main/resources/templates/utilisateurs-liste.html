@@ -1,0 +1,42 @@
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page(~{::title}, ~{::content})}">
+<title>Utilisateurs</title>
+
+<th:block th:fragment="content">
+
+    <h2 class="mb-4 fw-bold">Gestion des utilisateurs</h2>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                <tr class="text-muted small">
+                    <th>ID</th>
+                    <th>Nom</th>
+                    <th>Email</th>
+                    <th>Rôle actuel</th>
+                    <th>Changer le rôle</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="u : ${utilisateurs}">
+                    <td th:text="${u.id}"></td>
+                    <td th:text="${u.nom}"></td>
+                    <td th:text="${u.email}"></td>
+                    <td th:text="${u.role}"></td>
+                    <td>
+                        <form th:action="@{/utilisateurs/{id}/role(id=${u.id})}" method="post" class="d-flex gap-2">
+                            <select name="role" class="form-select form-select-sm" style="width: auto;">
+                                <option th:each="r : ${roles}" th:value="${r}" th:text="${r}"
+                                        th:selected="${r == u.role}"></option>
+                            </select>
+                            <button type="submit" class="btn btn-sm btn-primary">Mettre à jour</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</th:block>
+</html>
