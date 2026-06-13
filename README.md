@@ -41,9 +41,11 @@ Portail web permettant aux clients de soumettre des réclamations, aux agents de
 ---
 
 ## 📁 Structure du projet
+
+```text
 src/main/java/com/example/reclamations_portal/
-├── config/             # Spring Security + GlobalControllerAdvice
-├── controller/         # Auth, Dashboard, Réclamations, Catégories, Utilisateurs, Réponses
-├── model/              # Utilisateur, Réclamation, Réponse, Catégorie, Role, StatutReclamation
-├── repository/         # Repositories Spring Data JPA
-└── service/            # Logique métier
+├── config/        # Configuration (Spring Security, GlobalControllerAdvice)
+├── controller/    # Contrôleurs web (Auth, Dashboard, Réclamations, etc.)
+├── model/         # Entités (Utilisateur, Réclamation, Réponse, Catégorie, etc.)
+├── repository/    # Interfaces d'accès aux données (Spring Data JPA)
+└── service/       # Logique métier et gestion des processus
